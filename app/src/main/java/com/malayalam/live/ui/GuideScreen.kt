@@ -3,7 +3,6 @@ package com.malayalam.live.ui
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -115,10 +114,10 @@ fun GuideScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Canvas)
-            .padding(start = 54.dp, end = 54.dp, top = 26.dp, bottom = 22.dp),
+            .padding(start = 42.dp, end = 42.dp, top = 18.dp, bottom = 14.dp),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().height(62.dp),
+            modifier = Modifier.fillMaxWidth().height(54.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
@@ -127,7 +126,7 @@ fun GuideScreen(
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
             ) {
                 Box(
-                    modifier = Modifier.size(42.dp).background(Accent, RoundedCornerShape(14.dp)),
+                    modifier = Modifier.size(38.dp).background(Accent, RoundedCornerShape(13.dp)),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text("M", color = Color(0xFF102018), fontSize = 24.sp, fontWeight = FontWeight.Black)
@@ -140,7 +139,7 @@ fun GuideScreen(
             SearchBox(search, { search = it }, Modifier.width(400.dp).height(52.dp))
         }
 
-        Spacer(Modifier.height(17.dp))
+        Spacer(Modifier.height(12.dp))
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.fillMaxWidth(),
@@ -153,7 +152,7 @@ fun GuideScreen(
                 ) { selectedCategory = category }
             }
         }
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(8.dp))
 
         when {
             state.isLoading && state.channels.isEmpty() -> CenterMessage("Loading your Malayalam channels…", Modifier.weight(1f))
@@ -268,10 +267,10 @@ private fun CategoryChip(category: String, selected: Boolean, modifier: Modifier
     var focused by remember { mutableStateOf(false) }
     Surface(
         onClick = onClick,
-        modifier = modifier.height(46.dp).onFocusChanged { focused = it.isFocused },
+        modifier = modifier.height(40.dp).onFocusChanged { focused = it.isFocused },
     ) {
         Box(
-            modifier = Modifier
+            modifier = Modifier.fillMaxSize()
                 .background(if (selected) Accent else PanelRaised, RoundedCornerShape(23.dp))
                 .border(if (focused && !selected) 2.dp else 0.dp, if (focused && !selected) Accent else Color.Transparent, RoundedCornerShape(23.dp))
                 .padding(horizontal = 21.dp),
@@ -291,10 +290,10 @@ private fun CategoryChip(category: String, selected: Boolean, modifier: Modifier
 private fun FeaturedPanel(channel: Channel?, onPlay: () -> Unit, onBrowse: () -> Unit) {
     val shape = RoundedCornerShape(26.dp)
     Row(
-        modifier = Modifier.fillMaxWidth().height(208.dp)
+        modifier = Modifier.fillMaxWidth().height(172.dp)
             .background(Panel, shape)
             .border(1.dp, Hairline, shape)
-            .padding(start = 30.dp, end = 28.dp, top = 24.dp, bottom = 24.dp),
+            .padding(start = 26.dp, end = 24.dp, top = 18.dp, bottom = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(9.dp)) {
@@ -308,7 +307,7 @@ private fun FeaturedPanel(channel: Channel?, onPlay: () -> Unit, onBrowse: () ->
             Text(
                 channel?.name ?: "A little Kerala,\na lot of home.",
                 color = Ink,
-                fontSize = if (channel != null) 31.sp else 30.sp,
+                fontSize = if (channel != null) 28.sp else 27.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -329,17 +328,17 @@ private fun FeaturedPanel(channel: Channel?, onPlay: () -> Unit, onBrowse: () ->
         }
 
         Box(
-            modifier = Modifier.width(270.dp).fillMaxHeight(),
+            modifier = Modifier.width(224.dp).fillMaxHeight(),
             contentAlignment = Alignment.Center,
         ) {
-            Box(Modifier.size(166.dp).background(PanelSoft, CircleShape), contentAlignment = Alignment.Center) {
+            Box(Modifier.size(136.dp).background(PanelSoft, CircleShape), contentAlignment = Alignment.Center) {
                 if (channel?.logoUrl.isNullOrBlank()) {
                     Text(channel?.name?.take(2)?.uppercase() ?: "മ", color = Accent, fontSize = 38.sp, fontWeight = FontWeight.Black)
                 } else {
                     AsyncImage(
                         model = channel?.logoUrl,
                         contentDescription = "${channel?.name} logo",
-                        modifier = Modifier.size(122.dp),
+                        modifier = Modifier.size(102.dp),
                     )
                 }
             }
@@ -380,7 +379,7 @@ private fun ChannelSectionRow(
                     favorite = channel.id in favorites,
                     onPlay = { onPlay(channel) },
                     onToggleFavorite = { onToggleFavorite(channel) },
-                    modifier = Modifier.width(366.dp).height(140.dp),
+                    modifier = Modifier.width(310.dp).height(118.dp),
                     focusRequester = if (channel == channels.firstOrNull()) firstCardFocus else null,
                 )
             }
@@ -399,8 +398,8 @@ private fun ChannelCard(
 ) {
     var cardFocused by remember(channel.id) { mutableStateOf(false) }
     var favoriteFocused by remember(channel.id) { mutableStateOf(false) }
-    val cardScale by animateFloatAsState(if (cardFocused || favoriteFocused) 1.025f else 1f, label = "channel-card-scale")
-    val shape = RoundedCornerShape(20.dp)
+    val cardScale by animateFloatAsState(if (cardFocused || favoriteFocused) 1.02f else 1f, label = "channel-card-scale")
+    val shape = RoundedCornerShape(18.dp)
 
     Box(modifier = modifier.scale(cardScale)) {
         Surface(
@@ -413,29 +412,29 @@ private fun ChannelCard(
                 modifier = Modifier.fillMaxSize()
                     .background(Panel, shape)
                     .border(if (cardFocused || favoriteFocused) 2.dp else 1.dp, if (cardFocused || favoriteFocused) Accent else Hairline, shape)
-                    .padding(start = 16.dp, end = 66.dp, top = 15.dp, bottom = 15.dp),
+                    .padding(start = 14.dp, end = 54.dp, top = 12.dp, bottom = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(15.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                ChannelLogo(channel, Modifier.size(82.dp))
+                ChannelLogo(channel, Modifier.size(68.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                     Text(
                         channel.name,
                         color = Ink,
-                        fontSize = 18.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
-                        lineHeight = 22.sp,
+                        lineHeight = 20.sp,
                     )
-                    Text(channel.category, color = Muted, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(channel.category, color = Muted, fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
         }
 
         Surface(
             onClick = onToggleFavorite,
-            modifier = Modifier.align(Alignment.TopEnd).padding(10.dp).size(42.dp)
+            modifier = Modifier.align(Alignment.TopEnd).padding(8.dp).size(36.dp)
                 .onFocusChanged { favoriteFocused = it.isFocused }
                 .semantics {
                     contentDescription = if (favorite) "Remove ${channel.name} from favorites" else "Add ${channel.name} to favorites"
