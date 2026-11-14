@@ -254,7 +254,7 @@ private fun SearchBox(value: String, onValueChange: (String) -> Unit, modifier: 
             },
         )
         if (value.isNotEmpty()) {
-            Surface(onClick = { onValueChange("") }, shape = RoundedCornerShape(8.dp)) {
+            Surface(onClick = { onValueChange("") }) {
                 Box(Modifier.background(PanelRaised, RoundedCornerShape(8.dp)).padding(horizontal = 9.dp, vertical = 6.dp)) {
                     Text("Clear", color = Ink, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
@@ -269,7 +269,6 @@ private fun CategoryChip(category: String, selected: Boolean, modifier: Modifier
     Surface(
         onClick = onClick,
         modifier = modifier.height(46.dp).onFocusChanged { focused = it.isFocused },
-        shape = RoundedCornerShape(23.dp),
     ) {
         Box(
             modifier = Modifier
@@ -409,7 +408,6 @@ private fun ChannelCard(
             modifier = Modifier.fillMaxSize()
                 .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
                 .onFocusChanged { cardFocused = it.isFocused },
-            shape = shape,
         ) {
             Row(
                 modifier = Modifier.fillMaxSize()
@@ -442,7 +440,6 @@ private fun ChannelCard(
                 .semantics {
                     contentDescription = if (favorite) "Remove ${channel.name} from favorites" else "Add ${channel.name} to favorites"
                 },
-            shape = CircleShape,
         ) {
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -476,7 +473,6 @@ private fun ActionButton(text: String, onClick: () -> Unit, modifier: Modifier =
     Surface(
         onClick = onClick,
         modifier = modifier.height(44.dp).onFocusChanged { focused = it.isFocused },
-        shape = RoundedCornerShape(14.dp),
     ) {
         Box(
             modifier = Modifier
