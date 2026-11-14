@@ -47,7 +47,6 @@ class MainActivity : ComponentActivity() {
                 } else {
                     PlayerScreen(
                         channel = channel,
-                        schedule = state.schedules[channel.id],
                         player = player,
                         retryToken = state.retryToken,
                         onUserAgent = { userAgent ->
