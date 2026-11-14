@@ -6,14 +6,14 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.darkColorScheme
 
 private val MalayalamColors = darkColorScheme(
-    primary = Color(0xFFDCE8D9),
-    onPrimary = Color(0xFF174B39),
-    secondary = Color(0xFFF08B70),
-    onSecondary = Color(0xFF2A1713),
-    background = Color(0xFF10251D),
-    onBackground = Color(0xFFF5F1E7),
-    surface = Color(0xFF19342A),
-    onSurface = Color(0xFFF5F1E7),
+    primary = Color(0xFFD8EF83),
+    onPrimary = Color(0xFF132018),
+    secondary = Color(0xFFFF9B75),
+    onSecondary = Color(0xFF25140F),
+    background = Color(0xFF091712),
+    onBackground = Color(0xFFF4F5EF),
+    surface = Color(0xFF12251E),
+    onSurface = Color(0xFFF4F5EF),
 )
 
 @Composable
