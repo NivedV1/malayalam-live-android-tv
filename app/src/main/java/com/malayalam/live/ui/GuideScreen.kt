@@ -29,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -211,7 +212,7 @@ fun GuideScreen(
                     item(key = "empty") {
                         EmptyState(
                             message = if (selectedCategory == "Favorites") {
-                                "Your favorites will show up here. Select the heart on any channel to save it."
+                                "Your favorites will show up here. Hold OK on any channel to add it to favorites."
                             } else {
                                 "No channels match that search. Try another name or category."
                             },
@@ -359,13 +360,15 @@ private fun ChannelCard(
     focusRequester: FocusRequester? = null,
 ) {
     var cardFocused by remember(channel.id) { mutableStateOf(false) }
-    var favoriteFocused by remember(channel.id) { mutableStateOf(false) }
-    val cardScale by animateFloatAsState(if (cardFocused || favoriteFocused) 1.035f else 1f, label = "channel-card-scale")
+    var showOptions by remember(channel.id) { mutableStateOf(false) }
+    val menuFocus = remember { FocusRequester() }
+    val cardScale by animateFloatAsState(if (cardFocused) 1.035f else 1f, label = "channel-card-scale")
     val shape = RoundedCornerShape(22.dp)
 
     Box(modifier = modifier.scale(cardScale)) {
         Surface(
             onClick = onPlay,
+            onLongClick = { showOptions = true },
             modifier = Modifier.fillMaxSize()
                 .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
                 .onFocusChanged { cardFocused = it.isFocused },
@@ -378,7 +381,7 @@ private fun ChannelCard(
             Row(
                 modifier = Modifier.fillMaxSize()
                     .background(Panel, shape)
-                    .border(if (cardFocused || favoriteFocused) 2.dp else 1.dp, if (cardFocused || favoriteFocused) Accent else Hairline, shape)
+                    .border(if (cardFocused) 2.dp else 1.dp, if (cardFocused) Accent else Hairline, shape)
                     .padding(start = 14.dp, end = 54.dp, top = 12.dp, bottom = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -399,26 +402,31 @@ private fun ChannelCard(
             }
         }
 
-        Surface(
-            onClick = onToggleFavorite,
+        Box(
             modifier = Modifier.align(Alignment.TopEnd).padding(8.dp).size(36.dp)
-                .onFocusChanged { favoriteFocused = it.isFocused }
-                .semantics {
-                    contentDescription = if (favorite) "Remove ${channel.name} from favorites" else "Add ${channel.name} to favorites"
-                },
-            colors = ClickableSurfaceDefaults.colors(
-                containerColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent,
-                pressedContainerColor = Color.Transparent,
-            ),
+                .background(if (favorite) Color(0xFF5A302E) else PanelRaised, CircleShape),
+            contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-                    .background(if (favorite) Color(0xFF5A302E) else PanelRaised, CircleShape)
-                    .border(if (favoriteFocused) 2.dp else 1.dp, if (favoriteFocused) Accent else Hairline, CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(if (favorite) "♥" else "♡", color = if (favorite) AccentWarm else Muted, fontSize = 22.sp)
+            Text(if (favorite) "♥" else "♡", color = if (favorite) AccentWarm else Muted, fontSize = 22.sp)
+        }
+        if (showOptions) {
+            Dialog(onDismissRequest = { showOptions = false }) {
+                Column(
+                    modifier = Modifier.width(380.dp).background(Panel, RoundedCornerShape(20.dp)).padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(18.dp),
+                ) {
+                    Text(channel.name, color = Ink, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                    ActionButton(
+                        text = if (favorite) "Remove from favorites" else "Add to favorites",
+                        onClick = {
+                            showOptions = false
+                            onToggleFavorite()
+                        },
+                        modifier = Modifier.focusRequester(menuFocus),
+                    )
+                    ActionButton("Cancel", { showOptions = false })
+                }
+                LaunchedEffect(Unit) { menuFocus.requestFocus() }
             }
         }
     }
