@@ -233,14 +233,7 @@ fun GuideScreen(
                 }
             }
         }
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text("D-pad: browse   •   OK: watch   •   ♡: save favorite", color = Muted, fontSize = 12.sp)
-            ActionButton(if (state.isLoading) "Refreshing…" else "Refresh channels", { if (!state.isLoading) onRefresh() })
-        }
+
     }
 }
 
