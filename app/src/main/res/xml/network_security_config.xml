@@ -6,5 +6,7 @@
         <domain>103.85.204.205</domain>
         <domain>103.135.253.32</domain>
         <domain>103.185.24.134</domain>
+        <domain>45.171.64.30</domain>
+        <domain>cdn4.skygo.mn</domain>
     </domain-config>
 </network-security-config>

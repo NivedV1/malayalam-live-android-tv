@@ -113,3 +113,27 @@ https://5a1178b42cc03.streamlock.net/8220/8220/playlist.m3u8
 https://em4qj6nedyvg-hls-live.wmncdn.net/liveunit/89b1e919eed04e59383cf820d644c20e.sdp/playlist.m3u8
 #EXTINF:-1 tvg-id="Vision.in@SD" tvg-logo="https://i.imgur.com/YozqNL3.jpg" group-title="General",Vision (India) (576p)
 http://103.85.204.205:1935/VISIONMEDIA/live/playlist.m3u8
+#EXTINF:-1 tvg-id="DiscoveryScience" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Discovery_Science_2017_Logo.svg/960px-Discovery_Science_2017_Logo.svg.png" group-title="Science",Discovery Science (720p)
+http://45.171.64.30:6060/play/a007/index.m3u8
+#EXTINF:-1 tvg-id="InWonder" tvg-logo="https://cdn.uc.assets.prezly.com/f12e798d-6da4-46e1-8ec5-e391d6762659/InWonder_portrait-purple.png" group-title="Science",InWonder HD (1080p)
+https://amg00861-terninternation-inwonder-samsungau-1k63k.amagi.tv/playlist/amg00861-terninternation-inwonder-samsungau/playlist.m3u8
+#EXTINF:-1 tvg-id="Wonder" tvg-logo="https://i.imgur.com/FQ0FpXV.png" group-title="Science",Wonder Documentary (1080p)
+https://lds-wonder-rakuten.amagi.tv/playlist.m3u8
+#EXTINF:-1 tvg-id="CartoonNetwork" tvg-logo="https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_CARTOON_NETWORK_HDSYMPLUS/images/LOGO_HD/image.png" group-title="Kids",Cartoon Network (720p)
+https://cdn4.skygo.mn/live/disk1/Cartoon_Network/HLSv3-FTA/Cartoon_Network.m3u8
+#EXTINF:-1 tvg-id="Cartoonito" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Cartoonito_2021.svg/512px-Cartoonito_2021.svg.png" group-title="Kids",Cartoonito / Boomerang (720p)
+http://cdn4.skygo.mn/live/disk1/Boomerang/HLSv3-FTA/Boomerang.m3u8
+#EXTINF:-1 tvg-id="Animax" tvg-logo="https://jiotvimages.cdn.jio.com/dare_images/images/Animax.png" group-title="Kids",Animax (1080p)
+https://amg02159-kcglobal-amg02159c1-samsung-in-521.playouts.now.amagi.tv/playlist/amg02159-kcglobal-animax-samsungin/playlist.m3u8
+#EXTINF:-1 tvg-id="PBSKids" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/6/60/PBS_Kids_logo_2022.svg/512px-PBS_Kids_logo_2022.svg.png" group-title="Kids",PBS Kids (720p)
+https://livestream.pbskids.org/out/v1/14507d931bbe48a69287e4850e53443c/est.m3u8
+#EXTINF:-1 tvg-id="LegoChannel" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/LEGO_logo.svg/512px-LEGO_logo.svg.png" group-title="Kids",Lego Channel (1080p)
+https://dltiqboxjw21d.cloudfront.net/index.m3u8
+#EXTINF:-1 tvg-id="BabyShark" tvg-logo="https://i.imgur.com/nSSUHcg.png" group-title="Kids",Baby Shark TV (1080p)
+https://newidco-babysharktv-1-us.roku.wurl.tv/playlist.m3u8
+#EXTINF:-1 tvg-id="DuckTV" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Ducktv_logo.png/512px-Ducktv_logo.png" group-title="Kids",DuckTV (1080p)
+https://dash3.antik.sk/live/duck_tv/index.m3u8
+#EXTINF:-1 tvg-id="NickelodeonToons" tvg-logo="https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_NICK/images/LOGO_HD/image.png" group-title="Kids",Nickelodeon Toons (720p)
+https://jmp2.uk/plu-645951c0e94c38000802d2cb.m3u8
+#EXTINF:-1 tvg-id="NickJrClub" tvg-logo="https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_NICK_JUNIOR/images/LOGO_HD/image.png" group-title="Kids",Nick Jr. Club (720p)
+https://jmp2.uk/plu-5ddd7cb2cbb9010009b4fe32.m3u8
