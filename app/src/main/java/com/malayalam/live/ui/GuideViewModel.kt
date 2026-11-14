@@ -5,8 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.malayalam.live.data.Channel
 import com.malayalam.live.data.ChannelRepository
-import com.malayalam.live.data.ChannelSchedule
-import com.malayalam.live.data.EpgRepository
 import com.malayalam.live.data.LocalLibrary
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +14,6 @@ import kotlinx.coroutines.launch
 
 data class GuideUiState(
     val channels: List<Channel> = emptyList(),
-    val schedules: Map<String, ChannelSchedule> = emptyMap(),
     val favorites: Set<String> = emptySet(),
     val recentIds: List<String> = emptyList(),
     val isLoading: Boolean = true,
@@ -27,7 +24,6 @@ data class GuideUiState(
 
 class GuideViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = ChannelRepository(application)
-    private val epgRepository = EpgRepository(application)
     private val library = LocalLibrary(application)
     private val _uiState = MutableStateFlow(
         GuideUiState(favorites = library.favorites(), recentIds = library.recent()),
@@ -40,13 +36,7 @@ class GuideViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             runCatching { repository.loadChannels() }
-                .onSuccess { channels ->
-                    _uiState.update { it.copy(channels = channels, isLoading = false) }
-                    viewModelScope.launch {
-                        val schedules = epgRepository.loadSchedules(channels)
-                        _uiState.update { it.copy(schedules = schedules) }
-                    }
-                }
+                .onSuccess { channels -> _uiState.update { it.copy(channels = channels, isLoading = false) } }
                 .onFailure { error ->
                     _uiState.update {
                         it.copy(isLoading = false, error = error.message ?: "Could not load the channel guide.")

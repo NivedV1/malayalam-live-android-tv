@@ -49,11 +49,6 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
 import com.malayalam.live.data.Channel
-import com.malayalam.live.data.ChannelSchedule
-import com.malayalam.live.data.TvProgram
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 private val Canvas = Color(0xFF091712)
 private val Panel = Color(0xFF12251E)
@@ -185,7 +180,6 @@ fun GuideScreen(
                             title = "Your favorites",
                             channels = favoriteChannels,
                             favorites = state.favorites,
-                            schedules = state.schedules,
                             onPlay = onPlay,
                             onToggleFavorite = onToggleFavorite,
                         )
@@ -198,7 +192,6 @@ fun GuideScreen(
                             title = "Recently watched",
                             channels = recentChannels,
                             favorites = state.favorites,
-                            schedules = state.schedules,
                             onPlay = onPlay,
                             onToggleFavorite = onToggleFavorite,
                         )
@@ -222,7 +215,6 @@ fun GuideScreen(
                                 title = section.title,
                                 channels = section.channels,
                                 favorites = state.favorites,
-                                schedules = state.schedules,
                                 onPlay = onPlay,
                                 onToggleFavorite = onToggleFavorite,
                                 firstCardFocus = if (sectionIndex == 0) firstChannelFocus else null,
@@ -385,7 +377,6 @@ private fun ChannelSectionRow(
     title: String,
     channels: List<Channel>,
     favorites: Set<String>,
-    schedules: Map<String, ChannelSchedule>,
     onPlay: (Channel) -> Unit,
     onToggleFavorite: (Channel) -> Unit,
     firstCardFocus: FocusRequester? = null,
@@ -405,10 +396,9 @@ private fun ChannelSectionRow(
                 ChannelCard(
                     channel = channel,
                     favorite = channel.id in favorites,
-                    schedule = schedules[channel.id],
                     onPlay = { onPlay(channel) },
                     onToggleFavorite = { onToggleFavorite(channel) },
-                    modifier = Modifier.width(350.dp).height(148.dp),
+                    modifier = Modifier.width(310.dp).height(118.dp),
                     focusRequester = if (channel == channels.firstOrNull()) firstCardFocus else null,
                 )
             }
@@ -420,7 +410,6 @@ private fun ChannelSectionRow(
 private fun ChannelCard(
     channel: Channel,
     favorite: Boolean,
-    schedule: ChannelSchedule?,
     onPlay: () -> Unit,
     onToggleFavorite: () -> Unit,
     modifier: Modifier = Modifier,
@@ -452,7 +441,7 @@ private fun ChannelCard(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 ChannelLogo(channel, Modifier.size(68.dp))
-                Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                     Text(
                         channel.name,
                         color = Ink,
@@ -463,8 +452,6 @@ private fun ChannelCard(
                         lineHeight = 20.sp,
                     )
                     Text(channel.category, color = Muted, fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    schedule?.current?.let { ProgramLine("NOW", it, Accent) }
-                    schedule?.next?.let { ProgramLine("NEXT", it, Muted) }
                 }
             }
         }
@@ -493,23 +480,6 @@ private fun ChannelCard(
         }
     }
 }
-
-@Composable
-private fun ProgramLine(label: String, program: TvProgram, color: Color) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-        Text(label, color = color, fontSize = 10.sp, fontWeight = FontWeight.Black, letterSpacing = 0.6.sp)
-        Text(
-            "${program.title} · ${formatProgramTime(program.startsAt)}",
-            color = if (label == "NOW") Ink else Muted,
-            fontSize = 12.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}
-
-private fun formatProgramTime(timestamp: Long): String =
-    SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(timestamp))
 
 @Composable
 private fun ChannelLogo(channel: Channel, modifier: Modifier = Modifier) {
