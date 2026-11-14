@@ -31,12 +31,14 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.malayalam.live.data.Channel
+import com.malayalam.live.data.ChannelSchedule
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 
 @Composable
 fun PlayerScreen(
     channel: Channel,
+    schedule: ChannelSchedule?,
     player: ExoPlayer,
     retryToken: Int,
     onUserAgent: (String?) -> Unit,
@@ -79,13 +81,16 @@ fun PlayerScreen(
             modifier = Modifier.fillMaxSize(),
         )
 
-        Row(
+        Column(
             modifier = Modifier.align(Alignment.TopStart).padding(start = 48.dp, top = 28.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text(channel.name, color = Color.White, fontSize = 26.sp)
-            Spacer(Modifier.width(14.dp))
-            Text("LIVE", color = Color(0xFFF08B70), fontSize = 14.sp)
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                Text(channel.name, color = Color.White, fontSize = 26.sp)
+                Text("LIVE", color = Color(0xFFF08B70), fontSize = 14.sp)
+            }
+            schedule?.current?.let { Text("NOW · ${it.title}", color = Color.White, fontSize = 17.sp, maxLines = 1) }
+            schedule?.next?.let { Text("NEXT · ${it.title}", color = Color(0xFFCCD3CE), fontSize = 14.sp, maxLines = 1) }
         }
 
         if (playbackError != null) {
