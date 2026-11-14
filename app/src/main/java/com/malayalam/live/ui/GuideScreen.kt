@@ -44,6 +44,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
@@ -253,8 +254,21 @@ private fun SearchBox(value: String, onValueChange: (String) -> Unit, modifier: 
             },
         )
         if (value.isNotEmpty()) {
-            Surface(onClick = { onValueChange("") }) {
-                Box(Modifier.background(PanelRaised, RoundedCornerShape(8.dp)).padding(horizontal = 9.dp, vertical = 6.dp)) {
+            var clearFocused by remember { mutableStateOf(false) }
+            Surface(
+                onClick = { onValueChange("") },
+                modifier = Modifier.onFocusChanged { clearFocused = it.isFocused },
+                colors = ClickableSurfaceDefaults.colors(
+                    containerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    pressedContainerColor = Color.Transparent,
+                ),
+            ) {
+                Box(
+                    Modifier.background(PanelRaised, RoundedCornerShape(8.dp))
+                        .border(if (clearFocused) 2.dp else 0.dp, if (clearFocused) Accent else Color.Transparent, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 9.dp, vertical = 6.dp),
+                ) {
                     Text("Clear", color = Ink, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
             }
@@ -268,11 +282,16 @@ private fun CategoryChip(category: String, selected: Boolean, modifier: Modifier
     Surface(
         onClick = onClick,
         modifier = modifier.height(40.dp).onFocusChanged { focused = it.isFocused },
+        colors = ClickableSurfaceDefaults.colors(
+            containerColor = Color.Transparent,
+            focusedContainerColor = Color.Transparent,
+            pressedContainerColor = Color.Transparent,
+        ),
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
                 .background(if (selected) Accent else PanelRaised, RoundedCornerShape(23.dp))
-                .border(if (focused && !selected) 2.dp else 0.dp, if (focused && !selected) Accent else Color.Transparent, RoundedCornerShape(23.dp))
+                .border(if (focused) 2.dp else 0.dp, if (selected) AccentWarm else Accent, RoundedCornerShape(23.dp))
                 .padding(horizontal = 21.dp),
             contentAlignment = Alignment.Center,
         ) {
@@ -407,6 +426,11 @@ private fun ChannelCard(
             modifier = Modifier.fillMaxSize()
                 .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
                 .onFocusChanged { cardFocused = it.isFocused },
+            colors = ClickableSurfaceDefaults.colors(
+                containerColor = Color.Transparent,
+                focusedContainerColor = Color.Transparent,
+                pressedContainerColor = Color.Transparent,
+            ),
         ) {
             Row(
                 modifier = Modifier.fillMaxSize()
@@ -439,6 +463,11 @@ private fun ChannelCard(
                 .semantics {
                     contentDescription = if (favorite) "Remove ${channel.name} from favorites" else "Add ${channel.name} to favorites"
                 },
+            colors = ClickableSurfaceDefaults.colors(
+                containerColor = Color.Transparent,
+                focusedContainerColor = Color.Transparent,
+                pressedContainerColor = Color.Transparent,
+            ),
         ) {
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -472,6 +501,11 @@ private fun ActionButton(text: String, onClick: () -> Unit, modifier: Modifier =
     Surface(
         onClick = onClick,
         modifier = modifier.height(44.dp).onFocusChanged { focused = it.isFocused },
+        colors = ClickableSurfaceDefaults.colors(
+            containerColor = Color.Transparent,
+            focusedContainerColor = Color.Transparent,
+            pressedContainerColor = Color.Transparent,
+        ),
     ) {
         Box(
             modifier = Modifier
