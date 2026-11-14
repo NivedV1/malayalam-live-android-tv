@@ -39,6 +39,7 @@ fun PlayerScreen(
     channel: Channel,
     player: ExoPlayer,
     retryToken: Int,
+    onUserAgent: (String?) -> Unit,
     onBack: () -> Unit,
     onRetry: () -> Unit,
 ) {
@@ -57,6 +58,7 @@ fun PlayerScreen(
 
     LaunchedEffect(channel.id, retryToken) {
         playbackError = null
+        onUserAgent(channel.userAgent)
         player.setMediaItem(MediaItem.fromUri(channel.streamUrl))
         player.prepare()
         player.playWhenReady = true
