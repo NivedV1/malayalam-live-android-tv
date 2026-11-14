@@ -50,15 +50,14 @@ import androidx.tv.material3.Text
 import coil.compose.AsyncImage
 import com.malayalam.live.data.Channel
 
-private val Canvas = Color(0xFF091712)
-private val Panel = Color(0xFF12251E)
-private val PanelRaised = Color(0xFF1A3027)
-private val PanelSoft = Color(0xFF203A30)
-private val Accent = Color(0xFFD8EF83)
-private val AccentWarm = Color(0xFFFF9B75)
-private val Ink = Color(0xFFF4F5EF)
-private val Muted = Color(0xFFACB9AF)
-private val Hairline = Color(0xFF30473C)
+private val Canvas = Color(0xFF0B0F14)
+private val Panel = Color(0xFF141B23)
+private val PanelRaised = Color(0xFF202A36)
+private val PanelSoft = Color(0xFF263442)
+private val Accent = Color(0xFFA8C7FA)
+private val Ink = Color(0xFFE3EAF4)
+private val Muted = Color(0xFFBFC8D5)
+private val Hairline = Color(0xFF3C4653)
 
 private data class ChannelSection(val title: String, val channels: List<Channel>)
 
@@ -115,7 +114,7 @@ fun GuideScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Canvas)
-            .padding(start = 42.dp, end = 42.dp, top = 18.dp, bottom = 14.dp),
+            .padding(start = 48.dp, end = 48.dp, top = 24.dp, bottom = 20.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().height(54.dp),
@@ -127,20 +126,20 @@ fun GuideScreen(
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
             ) {
                 Box(
-                    modifier = Modifier.size(38.dp).background(Accent, RoundedCornerShape(13.dp)),
+                    modifier = Modifier.size(42.dp).background(Accent, RoundedCornerShape(14.dp)),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text("M", color = Color(0xFF102018), fontSize = 24.sp, fontWeight = FontWeight.Black)
+                    Text("M", color = Color(0xFF10233F), fontSize = 24.sp, fontWeight = FontWeight.Black)
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                    Text("MALAYALAM LIVE", color = Ink, fontSize = 17.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
+                    Text("Malayalam Live", color = Ink, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.2.sp)
                     Text("Kerala, right at home", color = Muted, fontSize = 13.sp)
                 }
             }
             SearchBox(search, { search = it }, Modifier.width(400.dp).height(52.dp))
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(18.dp))
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.fillMaxWidth(),
@@ -153,7 +152,7 @@ fun GuideScreen(
                 ) { selectedCategory = category }
             }
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(14.dp))
 
         when {
             state.isLoading && state.channels.isEmpty() -> CenterMessage("Loading your Malayalam channels…", Modifier.weight(1f))
@@ -290,14 +289,14 @@ private fun CategoryChip(category: String, selected: Boolean, modifier: Modifier
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
-                .background(if (selected) Accent else PanelRaised, RoundedCornerShape(23.dp))
-                .border(if (focused) 2.dp else 0.dp, if (selected) AccentWarm else Accent, RoundedCornerShape(23.dp))
-                .padding(horizontal = 21.dp),
+                .background(if (selected) Accent else PanelRaised, RoundedCornerShape(50))
+                .border(if (focused) 2.dp else 1.dp, if (focused) Ink else if (selected) Accent else Hairline, RoundedCornerShape(50))
+                .padding(horizontal = 22.dp),
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 category,
-                color = if (selected) Color(0xFF132018) else Ink,
+                color = if (selected) Color(0xFF10233F) else Ink,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
             )
@@ -309,10 +308,10 @@ private fun CategoryChip(category: String, selected: Boolean, modifier: Modifier
 private fun FeaturedPanel(channel: Channel?, onPlay: () -> Unit, onBrowse: () -> Unit) {
     val shape = RoundedCornerShape(26.dp)
     Row(
-        modifier = Modifier.fillMaxWidth().height(172.dp)
-            .background(Panel, shape)
+        modifier = Modifier.fillMaxWidth().height(184.dp)
+            .background(PanelRaised, shape)
             .border(1.dp, Hairline, shape)
-            .padding(start = 26.dp, end = 24.dp, top = 18.dp, bottom = 18.dp),
+            .padding(start = 30.dp, end = 28.dp, top = 20.dp, bottom = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(9.dp)) {
@@ -363,7 +362,7 @@ private fun FeaturedPanel(channel: Channel?, onPlay: () -> Unit, onBrowse: () ->
             }
             Box(
                 modifier = Modifier.align(Alignment.BottomEnd).padding(end = 5.dp, bottom = 7.dp)
-                    .background(Color(0xFF2C463B), RoundedCornerShape(12.dp))
+                    .background(PanelSoft, RoundedCornerShape(12.dp))
                     .padding(horizontal = 12.dp, vertical = 8.dp),
             ) {
                 Text(if (channel != null) "LIVE CHANNEL" else "MALAYALAM TV", color = Ink, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
@@ -398,7 +397,7 @@ private fun ChannelSectionRow(
                     favorite = channel.id in favorites,
                     onPlay = { onPlay(channel) },
                     onToggleFavorite = { onToggleFavorite(channel) },
-                    modifier = Modifier.width(310.dp).height(118.dp),
+                    modifier = Modifier.width(330.dp).height(128.dp),
                     focusRequester = if (channel == channels.firstOrNull()) firstCardFocus else null,
                 )
             }
@@ -417,8 +416,8 @@ private fun ChannelCard(
 ) {
     var cardFocused by remember(channel.id) { mutableStateOf(false) }
     var favoriteFocused by remember(channel.id) { mutableStateOf(false) }
-    val cardScale by animateFloatAsState(if (cardFocused || favoriteFocused) 1.02f else 1f, label = "channel-card-scale")
-    val shape = RoundedCornerShape(18.dp)
+    val cardScale by animateFloatAsState(if (cardFocused || favoriteFocused) 1.035f else 1f, label = "channel-card-scale")
+    val shape = RoundedCornerShape(22.dp)
 
     Box(modifier = modifier.scale(cardScale)) {
         Surface(
@@ -471,7 +470,7 @@ private fun ChannelCard(
         ) {
             Box(
                 modifier = Modifier.fillMaxSize()
-                    .background(if (favorite) Color(0xFF49352E) else PanelRaised, CircleShape)
+                    .background(if (favorite) Color(0xFF5A302E) else PanelRaised, CircleShape)
                     .border(if (favoriteFocused) 2.dp else 1.dp, if (favoriteFocused) Accent else Hairline, CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
@@ -509,11 +508,11 @@ private fun ActionButton(text: String, onClick: () -> Unit, modifier: Modifier =
     ) {
         Box(
             modifier = Modifier
-                .background(if (focused) Color(0xFFE6F6AE) else Accent, RoundedCornerShape(14.dp))
+                .background(if (focused) Color(0xFFD3E3FD) else Accent, RoundedCornerShape(16.dp))
                 .padding(horizontal = 18.dp),
             contentAlignment = Alignment.Center,
         ) {
-            Text(text, color = Color(0xFF132018), fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            Text(text, color = Color(0xFF10233F), fontSize = 15.sp, fontWeight = FontWeight.Bold)
         }
     }
 }

@@ -85,27 +85,27 @@ fun PlayerScreen(
         ) {
             Text(channel.name, color = Color.White, fontSize = 26.sp)
             Spacer(Modifier.width(14.dp))
-            Text("LIVE", color = Color(0xFFF08B70), fontSize = 14.sp)
+            Text("LIVE", color = Color(0xFFA8C7FA), fontSize = 14.sp)
         }
 
         if (playbackError != null) {
             Column(
-                modifier = Modifier.align(Alignment.Center).background(Color(0xEE10251D)).padding(30.dp),
+                modifier = Modifier.align(Alignment.Center).background(Color(0xEE141B23)).padding(30.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text("Unable to play this channel", color = Color.White, fontSize = 25.sp)
                 Spacer(Modifier.height(10.dp))
-                Text(playbackError.orEmpty(), color = Color(0xFFB6C4B9), fontSize = 16.sp)
+                Text(playbackError.orEmpty(), color = Color(0xFFBFC8D5), fontSize = 16.sp)
                 Spacer(Modifier.height(20.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                     Surface(onClick = onRetry, modifier = Modifier.height(52.dp)) {
-                        Box(Modifier.background(Color(0xFFDCE8D9)).padding(horizontal = 23.dp), contentAlignment = Alignment.Center) {
-                            Text("Retry", color = Color(0xFF174B39), fontSize = 16.sp)
+                        Box(Modifier.background(Color(0xFFA8C7FA)).padding(horizontal = 23.dp), contentAlignment = Alignment.Center) {
+                            Text("Retry", color = Color(0xFF10233F), fontSize = 16.sp)
                         }
                     }
                     Surface(onClick = onBack, modifier = Modifier.height(52.dp)) {
-                        Box(Modifier.background(Color(0xFF315044)).padding(horizontal = 23.dp), contentAlignment = Alignment.Center) {
+                        Box(Modifier.background(Color(0xFF263442)).padding(horizontal = 23.dp), contentAlignment = Alignment.Center) {
                             Text("Back to guide", color = Color.White, fontSize = 16.sp)
                         }
                     }
