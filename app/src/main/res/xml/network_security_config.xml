@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+    <domain-config cleartextTrafficPermitted="true">
+        <domain>server.applelive.in</domain>
+        <domain>103.85.204.205</domain>
+        <domain>103.135.253.32</domain>
+        <domain>103.185.24.134</domain>
+    </domain-config>
+</network-security-config>

@@ -6,4 +6,6 @@ data class Channel(
     val streamUrl: String,
     val logoUrl: String?,
     val category: String,
+    val tvgId: String? = null,
+    val userAgent: String? = null,
 )

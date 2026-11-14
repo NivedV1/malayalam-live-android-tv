@@ -21,7 +21,11 @@ object M3uParser {
                         id = attributes["tvg-id"].orEmpty(),
                         logoUrl = attributes["tvg-logo"]?.takeIf(String::isNotBlank),
                         category = normalizeCategory(attributes["group-title"].orEmpty()),
+                        userAgent = attributes["http-user-agent"]?.let(::normalizeUserAgent),
                     )
+                }
+                line.startsWith("#EXTVLCOPT:http-user-agent=", ignoreCase = true) -> {
+                    pending = pending?.copy(userAgent = normalizeUserAgent(line.substringAfter('=')))
                 }
                 line.isNotBlank() && !line.startsWith('#') && pending != null -> {
                     val streamUrl = line.substringBefore('|').trim()
@@ -35,6 +39,8 @@ object M3uParser {
                             streamUrl = streamUrl,
                             logoUrl = pendingChannel.logoUrl,
                             category = pendingChannel.category,
+                            tvgId = pendingChannel.id.ifBlank { null },
+                            userAgent = pendingChannel.userAgent,
                         )
                     }
                     pending = null
@@ -72,10 +78,19 @@ object M3uParser {
         }
     }
 
+    private fun normalizeUserAgent(value: String): String? {
+        val prefix = "#EXTVLCOPT:http-user-agent="
+        val normalized = value.trim().let {
+            if (it.startsWith(prefix, ignoreCase = true)) it.substring(prefix.length).trim() else it
+        }
+        return normalized.takeIf(String::isNotBlank)
+    }
+
     private data class PendingChannel(
         val name: String,
         val id: String,
         val logoUrl: String?,
         val category: String,
+        val userAgent: String?,
     )
 }
