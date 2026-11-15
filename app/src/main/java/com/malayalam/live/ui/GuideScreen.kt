@@ -29,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -72,18 +73,18 @@ fun GuideScreen(
     var search by rememberSaveable { mutableStateOf("") }
     var selectedCategory by rememberSaveable { mutableStateOf("All") }
     val categoryFocus = remember { FocusRequester() }
-    val firstChannelFocus = remember { FocusRequester() }
     val firstCategory = remember(state.channels) {
-        listOf("All", "Favorites") + state.channels.map(Channel::category).distinct().sorted()
+        listOf("All", "Favorites", "Recent") + state.channels.map(Channel::category).distinct().sortedWith(compareBy<String> { if (it == "News") 0 else if (it == "Entertainment") 1 else 2 }.thenBy { it })
     }
 
     LaunchedEffect(Unit) { categoryFocus.requestFocus() }
 
-    val filtered = remember(state.channels, state.favorites, search, selectedCategory) {
+    val filtered = remember(state.channels, state.favorites, state.recentIds, search, selectedCategory) {
         state.channels.filter { channel ->
             val categoryMatches = when (selectedCategory) {
                 "All" -> true
                 "Favorites" -> channel.id in state.favorites
+                "Recent" -> channel.id in state.recentIds
                 else -> channel.category == selectedCategory
             }
             val query = search.trim()
@@ -115,7 +116,7 @@ fun GuideScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Canvas)
-            .padding(start = 48.dp, end = 48.dp, top = 24.dp, bottom = 20.dp),
+            .padding(start = 40.dp, end = 40.dp, top = 20.dp, bottom = 16.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().height(54.dp),
@@ -134,10 +135,10 @@ fun GuideScreen(
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
                     Text("Malayalam Live", color = Ink, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.2.sp)
-                    Text("Kerala, right at home", color = Muted, fontSize = 13.sp)
+                    Text("${state.channels.size} channels • Live TV", color = Muted, fontSize = 13.sp)
                 }
             }
-            SearchBox(search, { search = it }, Modifier.width(400.dp).height(52.dp))
+            SearchBox(search, { search = it }, Modifier.width(300.dp).height(46.dp))
         }
 
         Spacer(Modifier.height(18.dp))
@@ -164,14 +165,23 @@ fun GuideScreen(
             )
             else -> LazyColumn(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(22.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                item(key = "featured") {
-                    FeaturedPanel(
-                        channel = featuredChannel,
-                        onPlay = { featuredChannel?.let(onPlay) },
-                        onBrowse = { firstChannelFocus.requestFocus() },
-                    )
+                if (search.isBlank() && selectedCategory == "All" && featuredChannel != null) {
+                    item(key = "featured") {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().background(PanelRaised, RoundedCornerShape(16.dp)).padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            ChannelLogo(featuredChannel, Modifier.size(48.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text("LAST WATCHED", color = Accent, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                Text(featuredChannel.name, color = Ink, fontSize = 18.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            }
+                            ActionButton("Watch again", { onPlay(featuredChannel) })
+                        }
+                    }
                 }
 
                 if (search.isBlank() && selectedCategory == "All" && favoriteChannels.isNotEmpty()) {
@@ -202,14 +212,14 @@ fun GuideScreen(
                     item(key = "empty") {
                         EmptyState(
                             message = if (selectedCategory == "Favorites") {
-                                "Your favorites will show up here. Select the heart on any channel to save it."
+                                "Your favorites will show up here. Hold OK on any channel to add it to favorites."
                             } else {
                                 "No channels match that search. Try another name or category."
                             },
                         )
                     }
                 } else {
-                    channelSections.forEachIndexed { sectionIndex, section ->
+                    channelSections.forEach { section ->
                         item(key = "section-${section.title}") {
                             ChannelSectionRow(
                                 title = section.title,
@@ -217,13 +227,14 @@ fun GuideScreen(
                                 favorites = state.favorites,
                                 onPlay = onPlay,
                                 onToggleFavorite = onToggleFavorite,
-                                firstCardFocus = if (sectionIndex == 0) firstChannelFocus else null,
+                                
                             )
                         }
                     }
                 }
             }
         }
+
     }
 }
 
@@ -306,73 +317,6 @@ private fun CategoryChip(category: String, selected: Boolean, modifier: Modifier
 }
 
 @Composable
-private fun FeaturedPanel(channel: Channel?, onPlay: () -> Unit, onBrowse: () -> Unit) {
-    val shape = RoundedCornerShape(26.dp)
-    Row(
-        modifier = Modifier.fillMaxWidth().height(184.dp)
-            .background(PanelRaised, shape)
-            .border(1.dp, Hairline, shape)
-            .padding(start = 30.dp, end = 28.dp, top = 20.dp, bottom = 20.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(9.dp)) {
-            Text(
-                if (channel != null) "CONTINUE WATCHING" else "WELCOME HOME",
-                color = Accent,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 2.sp,
-            )
-            Text(
-                channel?.name ?: "A little Kerala,\na lot of home.",
-                color = Ink,
-                fontSize = if (channel != null) 28.sp else 27.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                lineHeight = 36.sp,
-            )
-            Text(
-                channel?.let { "${it.category}  ·  Recently watched" } ?: "Discover Malayalam news, entertainment, culture and more.",
-                color = Muted,
-                fontSize = 16.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Spacer(Modifier.height(1.dp))
-            ActionButton(
-                text = if (channel != null) "▶   Watch again" else "Browse channels",
-                onClick = if (channel != null) onPlay else onBrowse,
-            )
-        }
-
-        Box(
-            modifier = Modifier.width(224.dp).fillMaxHeight(),
-            contentAlignment = Alignment.Center,
-        ) {
-            Box(Modifier.size(136.dp).background(PanelSoft, CircleShape), contentAlignment = Alignment.Center) {
-                if (channel?.logoUrl.isNullOrBlank()) {
-                    Text(channel?.name?.take(2)?.uppercase() ?: "മ", color = Accent, fontSize = 38.sp, fontWeight = FontWeight.Black)
-                } else {
-                    AsyncImage(
-                        model = channel?.logoUrl,
-                        contentDescription = "${channel?.name} logo",
-                        modifier = Modifier.size(102.dp),
-                    )
-                }
-            }
-            Box(
-                modifier = Modifier.align(Alignment.BottomEnd).padding(end = 5.dp, bottom = 7.dp)
-                    .background(PanelSoft, RoundedCornerShape(12.dp))
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-            ) {
-                Text(if (channel != null) "LIVE CHANNEL" else "MALAYALAM TV", color = Ink, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
-            }
-        }
-    }
-}
-
-@Composable
 private fun ChannelSectionRow(
     title: String,
     channels: List<Channel>,
@@ -383,7 +327,7 @@ private fun ChannelSectionRow(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(title, color = Ink, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text(title, color = Ink, fontSize = 19.sp, fontWeight = FontWeight.Bold)
             Box(Modifier.background(PanelRaised, RoundedCornerShape(10.dp)).padding(horizontal = 9.dp, vertical = 4.dp)) {
                 Text(channels.size.toString(), color = Muted, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
             }
@@ -398,7 +342,7 @@ private fun ChannelSectionRow(
                     favorite = channel.id in favorites,
                     onPlay = { onPlay(channel) },
                     onToggleFavorite = { onToggleFavorite(channel) },
-                    modifier = Modifier.width(330.dp).height(128.dp),
+                    modifier = Modifier.width(274.dp).height(102.dp),
                     focusRequester = if (channel == channels.firstOrNull()) firstCardFocus else null,
                 )
             }
@@ -416,13 +360,15 @@ private fun ChannelCard(
     focusRequester: FocusRequester? = null,
 ) {
     var cardFocused by remember(channel.id) { mutableStateOf(false) }
-    var favoriteFocused by remember(channel.id) { mutableStateOf(false) }
-    val cardScale by animateFloatAsState(if (cardFocused || favoriteFocused) 1.035f else 1f, label = "channel-card-scale")
+    var showOptions by remember(channel.id) { mutableStateOf(false) }
+    val menuFocus = remember { FocusRequester() }
+    val cardScale by animateFloatAsState(if (cardFocused) 1.035f else 1f, label = "channel-card-scale")
     val shape = RoundedCornerShape(22.dp)
 
     Box(modifier = modifier.scale(cardScale)) {
         Surface(
             onClick = onPlay,
+            onLongClick = { showOptions = true },
             modifier = Modifier.fillMaxSize()
                 .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
                 .onFocusChanged { cardFocused = it.isFocused },
@@ -435,12 +381,12 @@ private fun ChannelCard(
             Row(
                 modifier = Modifier.fillMaxSize()
                     .background(Panel, shape)
-                    .border(if (cardFocused || favoriteFocused) 2.dp else 1.dp, if (cardFocused || favoriteFocused) Accent else Hairline, shape)
+                    .border(if (cardFocused) 2.dp else 1.dp, if (cardFocused) Accent else Hairline, shape)
                     .padding(start = 14.dp, end = 54.dp, top = 12.dp, bottom = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                ChannelLogo(channel, Modifier.size(68.dp))
+                ChannelLogo(channel, Modifier.size(48.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                     Text(
                         channel.name,
@@ -456,26 +402,31 @@ private fun ChannelCard(
             }
         }
 
-        Surface(
-            onClick = onToggleFavorite,
+        Box(
             modifier = Modifier.align(Alignment.TopEnd).padding(8.dp).size(36.dp)
-                .onFocusChanged { favoriteFocused = it.isFocused }
-                .semantics {
-                    contentDescription = if (favorite) "Remove ${channel.name} from favorites" else "Add ${channel.name} to favorites"
-                },
-            colors = ClickableSurfaceDefaults.colors(
-                containerColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent,
-                pressedContainerColor = Color.Transparent,
-            ),
+                .background(if (favorite) Color(0xFF5A302E) else PanelRaised, CircleShape),
+            contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-                    .background(if (favorite) Color(0xFF5A302E) else PanelRaised, CircleShape)
-                    .border(if (favoriteFocused) 2.dp else 1.dp, if (favoriteFocused) Accent else Hairline, CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(if (favorite) "♥" else "♡", color = if (favorite) AccentWarm else Muted, fontSize = 22.sp)
+            Text(if (favorite) "♥" else "♡", color = if (favorite) AccentWarm else Muted, fontSize = 22.sp)
+        }
+        if (showOptions) {
+            Dialog(onDismissRequest = { showOptions = false }) {
+                Column(
+                    modifier = Modifier.width(380.dp).background(Panel, RoundedCornerShape(20.dp)).padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(18.dp),
+                ) {
+                    Text(channel.name, color = Ink, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                    ActionButton(
+                        text = if (favorite) "Remove from favorites" else "Add to favorites",
+                        onClick = {
+                            showOptions = false
+                            onToggleFavorite()
+                        },
+                        modifier = Modifier.focusRequester(menuFocus),
+                    )
+                    ActionButton("Cancel", { showOptions = false })
+                }
+                LaunchedEffect(Unit) { menuFocus.requestFocus() }
             }
         }
     }
